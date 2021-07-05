@@ -1,23 +1,29 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import axios from 'axios'
+import Cause from './components/Cause'
 
 function App() {
+  const [deals, setDeals] = useState([])
+  const refresh = false
+  const[causeList, setCauseList] = useState([])
+  
+  useEffect(() => {
+      let causeListArray = ['All deals']
+      axios.get("https://bakesaleforgood.com/api/deals").then(data => {
+        for (let i = 0; i < data.data.length; i++) {
+          causeListArray.push(data.data[i.toString()].cause.name)
+        }
+        causeListArray = new Set(causeListArray)
+        causeListArray = Array.from(causeListArray)
+        setCauseList(causeListArray)
+        console.log(causeListArray)
+      })
+  }, [refresh])
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Cause list = {causeList} setDeals = {setDeals} />
     </div>
   );
 }
